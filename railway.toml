@@ -1,7 +1,6 @@
 [build]
-builder = "dockerfile"
-dockerfilePath = "./GameRouletteApi/Dockerfile"
+  builder = "paketobuildpacks/builder:base"
 
-[deploy]
-startCommand = "dotnet GameRouletteApi.dll"
-restartPolicyType = "never"
+
+[start]
+  cmd = "dotnet RoulettePresentation.dll"
