@@ -1,20 +1,16 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["GameRouletteApi/GameRouletteApi.csproj", "GameRouletteApi/"]
-RUN dotnet restore "GameRouletteApi/GameRouletteApi.csproj"
 COPY . .
-WORKDIR "/src/GameRouletteApi"
-RUN dotnet build "GameRouletteApi.csproj" -c Release -o /app/build
+RUN dotnet restore "RoulettePresentation/RoulettePresentation.csproj"
+RUN dotnet build "RoulettePresentation/RoulettePresentation.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "GameRouletteApi.csproj" -c Release -o /app/publish
+RUN dotnet publish "RoulettePresentation/RoulettePresentation.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "GameRouletteApi.dll"]
+ENTRYPOINT ["dotnet", "RoulettePresentation.dll"]
