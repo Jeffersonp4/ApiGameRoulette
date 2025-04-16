@@ -1,6 +1,3 @@
-[build]
-  builder = "paketobuildpacks/builder:base"
-
 
 [start]
   cmd = "dotnet RoulettePresentation.dll"
