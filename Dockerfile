@@ -1,19 +1,33 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
+# Etapa base: runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+# Etapa build: SDK para compilar
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["GameRouletteApi.csproj", "./"]
-RUN dotnet restore "GameRouletteApi.csproj"
+
+# Copiar la solución y los archivos del proyecto
+COPY ["GameRouletteApi.sln", "./"]
+COPY ["RoulettePresentation/RoulettePresentation.csproj", "RoulettePresentation/"]
+
+# Restaurar dependencias
+RUN dotnet restore "RoulettePresentation/RoulettePresentation.csproj"
+
+# Copiar todo el código
 COPY . .
-WORKDIR "/src/"
-RUN dotnet build "GameRouletteApi.csproj" -c Release -o /app/build
 
+# Compilar el proyecto
+WORKDIR "/src/RoulettePresentation"
+RUN dotnet build "RoulettePresentation.csproj" -c Release -o /app/build
+
+# Publicar el proyecto
 FROM build AS publish
-RUN dotnet publish "GameRouletteApi.csproj" -c Release -o /app/publish
+RUN dotnet publish "RoulettePresentation.csproj" -c Release -o /app/publish
 
+# Etapa final: runtime limpio
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "GameRouletteApi.dll"]
+ENTRYPOINT ["dotnet", "RoulettePresentation.dll"]
