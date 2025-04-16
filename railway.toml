@@ -1,0 +1,7 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "./GameRouletteApi/Dockerfile"
+
+[deploy]
+startCommand = "dotnet GameRouletteApi.dll"
+restartPolicyType = "never"
